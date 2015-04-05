@@ -60,26 +60,34 @@ class Application extends CI_Controller {
     function makemenu() {
         //get role & name from session
         $userRole = $this->session->userdata('userRole');
+        $userName = $this->session->userdata('userName');
+
+        $menu = [];
+        if( !is_null( $userName ) ) {
+            $menu[] = [ 'name' => 'Hello, ' . $userName . '!', 'link' => '#'];
+        }
+
         // make array, with menu choice for alpha
-        $menu = array(array('name' => "Alpha", 'link' => '/alpha'));
+        $menu[] = [ 'name' => "Alpha", 'link' => '/alpha' ];
 
         // if not logged in, add menu choice to login
-        if( is_null( $userRole ) ) {
-            $menu[] = array('name' => 'Login', 'link' => '/auth');
+        if( is_null( $userName ) ) {
+            $menu[] = [ 'name' => 'Login', 'link' => '/auth' ];
         }
+
         // if admin, add menu choices for beta, gamma and logout
-        else if( !is_null($userRole) && $userRole == 'admin' ) {
-            $menu[] = array('name' => "Beta", 'link' => '/beta');
-            $menu[] = array('name' => "Gamma", 'link' => '/gamma');
-            $menu[] = array('name' => 'Logout', 'link' => '/auth/logout');
+        if( $userRole == ROLE_ADMIN ) {
+            $menu[] = [ 'name' => 'Beta', 'link' => '/beta' ];
+            $menu[] = [ 'name' => 'Gamma', 'link' => '/gamma' ];
+            $menu[] = [ 'name' => 'Logout', 'link' => '/auth/logout' ];
         }
         // if user, add menu choice for beta and logout
-        else if( !is_null($userRole) && $userRole == 'user' ) {
-            $menu[] = array('name' => "Beta", 'link' => '/beta');
-            $menu[] = array('name' => 'Logout', 'link' => '/auth/logout');
+        else if( $userRole == ROLE_USER ) {
+            $menu[] = [ 'name' => 'Beta', 'link' => '/beta' ];
+            $menu[] = [ 'name' => 'Logout', 'link' => '/auth/logout' ];
         }
         // return the choices array
-        return array("menudata" => $menu);
+        return array('menudata' => $menu);
     }
 }
 
